@@ -113,27 +113,23 @@ subroutine init()
 
     if (vb) print *, "Energia potencial:"
   ! Hacemos unos pasos de minimizacion de energia, para evitar tener particulas muy cerca
-    dtm = 0.0001
+    dtm = 0.00001
     tmp = dtm**2/(2*m(1))
     do i=1,2000
 
       call force(1)
-      call intra_molec()
-      call fluid_wall()
-      if (vb.and.(mod(i,100)==0)) print *, Vtot
+      if (vb.and.(mod(i,200)==0)) print *, Vtot
 
       r = r + f * tmp
       r = modulo(r, L)
 
     end do
 
-    tmp = 100*tmp
-    do i=1,2000
+    tmp = 1000*tmp
+    do i=1,5000
 
       call force(1)
-      call intra_molec()
-      call fluid_wall()
-      if (vb.and.(mod(i,100)==0)) print *, Vtot
+      if (vb.and.(mod(i,500)==0)) print *, Vtot
 
       r = r + f * tmp
       r = modulo(r, L)

@@ -52,6 +52,9 @@ subroutine force(mode)
     
     presion = (presion/3 + N*T)/L**3
 
+    call intra_molec()
+    call fluid_wall()
+    
   end select
 
 end subroutine

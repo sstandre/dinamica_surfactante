@@ -41,8 +41,6 @@ program main
     call verlet_velocities()
     ! Actualizo el potencial y las fuerzas a t+dt
     call force(1)
-    call intra_molec()
-    call fluid_wall()
     ! Actualizar las fuerzas con el termostato de Langevin
     call lang()
     ! Velocidad "final" (en t+dt)
