@@ -25,16 +25,15 @@ subroutine force(mode)
     do i = 1, N-1
       i_type = atype(i)
       do j = i+1, N
-        j_type = atype(j)
-        eps_ij = eps(i_type, j_type)
-
+        
         dvec(:) = r(:,i) - r(:,j)
         ! Por condiciones de contorno, la distancia siempre debe ser -L/2<d<L/2
         dvec = dvec - L*int(2*dvec/L)
         ! Solo necesito distancia^2 para hacer las cuentas
         dist2 = sum(dvec*dvec)
-
         if(dist2 < rc2) then  ! Solo cuento atomos dentro del radio de corte
+          j_type = atype(j)
+          eps_ij = eps(i_type, j_type)
           ! Uso una variable temporal para no calcular tantas potencias de dist
           temp = sigma**6/dist2**3
           ! Vtot acumula el potencial de todos los pares, con la correccion del radio de corte

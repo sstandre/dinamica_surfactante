@@ -23,7 +23,7 @@ program main
   if (vb) then
     print *, '**************************************************************************'
     ! Calculo inicial de energia
-    Ecin = sum(v*v)/(2*m*N)
+    Ecin = sum(v*v)/(2*m(1)*N) ! Arreglar MASA
     Vtot = Vtot / N
     print *, "energia"
     print *, "  potencial                 cinetica                  total"
@@ -35,10 +35,19 @@ program main
   write(15, *) "Paso    Potencial   Cinetica    Total     Presion"
   do istep = 1, nstep
     ! Las nuevas posiciones y velocidades se calculan mediante Verlet
-    call verlet()
+    ! Actualizo posiciones a t+dt
+    call verlet_positions()
+    ! Velocidad "intermedia" (en t+dt/2)
+    call verlet_velocities()
+    ! Actualizo el potencial y las fuerzas a t+dt
+    call force(1)
+    ! Actualizar las fuerzas con el termostato de Langevin
+    call lang()
+    ! Velocidad "final" (en t+dt)
+    call verlet_velocities()
 
     if(mod(istep,nwrite)==0) then
-      Ecin = sum(v*v)/(2*m*N)
+      Ecin = sum(v*v)/(2*m(1)*N) !arreglar masa
       Vtot = Vtot / N
       if (vb) print *, Vtot, Ecin, Vtot+Ecin
       write(15, *) istep, Vtot, Ecin, Vtot+Ecin, presion

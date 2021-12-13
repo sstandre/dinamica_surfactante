@@ -1,3 +1,6 @@
+! Version vieja, no se usa
+stop
+
 subroutine verlet
     use globals
     implicit none
