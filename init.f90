@@ -6,28 +6,40 @@ subroutine init()
   logical :: es, ms
   integer :: i, j
   character(len=80) :: text
-  real(8) :: dtm, sv, tmp
+  real(8) :: dtm, sv(2), tmp
 #ifdef GDR
   integer :: k
 #endif
 
 !   Leer variables del archivo input.dat y alocar variables
   open(unit=11,file='input.dat',action='read',status='old')
-  read(11,*) N, text
+  read(11,*) n_1, text
+  read(11,*) n_2, text
   read(11,*) L, text
   read(11,*) T, text
   read(11,*) nstep, text
   read(11,*) dt, text
-  read(11,*) eps, text
+  read(11,*) eps(1,1), text
+  read(11,*) eps(2,2), text
+  read(11,*) eps(1,2), text
   read(11,*) sigma, text
-  read(11,*) m, text
+  read(11,*) m(1), text
+  read(11,*) m(2), text
   read(11,*) gamma, text
   read(11,*) nwrite, text
   read(11,*) vb, text
   close(11)
 
-  T = T * eps
-  allocate(r(3,N),v(3,N),f(3,N))
+  eps(2,1) = eps(1,2)
+  !sigma(2,1) = sigma(1,2)
+
+  !T = T * eps !Revisar
+  N = n_1 + n_2
+  allocate(r(3,N),v(3,N),f(3,N), atype(N))
+  !Asignar cada tipo de particula
+  atype(1:n_1) = 1
+  atype(n_1+1:N) = 2
+
 
 ![NO TOCAR] Inicializa generador de número random
   inquire(file='seed.dat',exist=es)
@@ -64,14 +76,14 @@ subroutine init()
     do i = 1, 3
       do j = 1, N
         r(i,j) = uni()*L
-        v(i,j) = rnor()*sv
+        v(i,j) = rnor()*sv(atype(j))
       end do
     end do
 
     if (vb) print *, "Energia potencial:"
   ! Hacemos unos pasos de minimizacion de energia, para evitar tener particulas muy cerca
     dtm = 0.001
-    tmp = dtm**2/(2*m)
+    tmp = dtm**2/(2*m(1))
     do i=1,500
 
       call force(1)

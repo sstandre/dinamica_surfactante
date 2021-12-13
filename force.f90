@@ -3,9 +3,9 @@ subroutine force(mode)
 #include "control.h" 
   implicit none
   integer, intent(in) :: mode
-  integer :: i, j
+  integer :: i, j, i_type, j_type
   real(8) :: dvec(3), fij(3)
-  real(8) :: dist2, temp
+  real(8) :: dist2, temp, eps_ij
 
   select case(mode)
   case(0)   ! Inicializar radio de corte y potencial
@@ -23,7 +23,11 @@ subroutine force(mode)
     presion = 0.0
 
     do i = 1, N-1
+      i_type = atype(i)
       do j = i+1, N
+        j_type = atype(j)
+        eps_ij = eps(i_type, j_type)
+
         dvec(:) = r(:,i) - r(:,j)
         ! Por condiciones de contorno, la distancia siempre debe ser -L/2<d<L/2
         dvec = dvec - L*int(2*dvec/L)
@@ -34,9 +38,9 @@ subroutine force(mode)
           ! Uso una variable temporal para no calcular tantas potencias de dist
           temp = sigma**6/dist2**3
           ! Vtot acumula el potencial de todos los pares, con la correccion del radio de corte
-          Vtot = Vtot + 4*eps*temp*(temp-1) - Vrc
+          Vtot = Vtot + 4*eps_ij*temp*(temp-1) - Vrc(i_type, j_type)
           ! fij es el vector de fuerza que siente el atomo i debido al j
-          fij(:) =  24*eps*temp*(2*temp-1)/dist2 * dvec(:)
+          fij(:) =  24*eps_ij*temp*(2*temp-1)/dist2 * dvec(:)
           ! Acumulo las fuerzas en el array f
           f(:,i) = f(:,i) + fij(:)
           ! El par de reaccion corresponde a la fueza que siente j debido a i
