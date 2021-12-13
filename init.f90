@@ -17,7 +17,6 @@ subroutine init()
   read(11,*) n_surf, text
   read(11,*) L, text
   read(11,*) Z, text
-  read(11,*) zskin, text
   read(11,*) T, text
   read(11,*) nstep, text
   read(11,*) dt, text
@@ -40,7 +39,8 @@ subroutine init()
   !Las propiedades de la pared estan hardcodeadas
   eps_wall(1) = 1.
   eps_wall(2) = 1.
-  sigma_wall = 1.
+  sigma_wall(1) = 1.
+  sigma_wall(2) = 1.
   
   ! Particulas de tipo 1
   n_1 = n_flu + n_surf
@@ -89,8 +89,8 @@ subroutine init()
 
     if (vb) print *,"  * Inicializando configuracion aleatoria"
     ! Primero sorteo los dimeros: particulas de tipo 1 con un offset a las de tipo 2
-    lim_inf = (/real(8) :: 0., 0., zskin/)
-    lim_sup = (/real(8) :: L, L, Z-zskin/)
+    lim_inf = (/real(8) :: 0., 0., 2.0/)
+    lim_sup = (/real(8) :: L, L, Z-2.0/)
     do i = 1, 3
       li= lim_inf(i)
       ls= lim_sup(i)

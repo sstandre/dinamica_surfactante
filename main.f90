@@ -13,13 +13,6 @@ program main
   call init()
   call force(1)
 
-  ! print *, "posiciones"
-  ! do i=1, N
-  !   print *, r(:,i)
-  ! end do
-
-  ! inicializar los bines con las distancias de cada cascara
-
   if (vb) then
     print *, '**************************************************************************'
     ! Calculo inicial de energia
