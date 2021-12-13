@@ -22,7 +22,9 @@ subroutine init()
   read(11,*) eps(1,1), text
   read(11,*) eps(2,2), text
   read(11,*) eps(1,2), text
-  read(11,*) sigma, text
+  read(11,*) sigma(1,1), text
+  read(11,*) sigma(2,2), text
+  read(11,*) sigma(1,2), text
   read(11,*) m(1), text
   read(11,*) m(2), text
   read(11,*) gamma, text
@@ -31,7 +33,7 @@ subroutine init()
   close(11)
 
   eps(2,1) = eps(1,2)
-  !sigma(2,1) = sigma(1,2)
+  sigma(2,1) = sigma(1,2)
 
   !T = T * eps !Revisar
   N = n_1 + n_2
