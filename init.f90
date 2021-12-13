@@ -121,7 +121,7 @@ subroutine init()
       if (vb.and.(mod(i,200)==0)) print *, Vtot
 
       r = r + f * tmp
-      r = modulo(r, L)
+      r(1:2,:) = modulo(r(1:2,:), L)
 
     end do
 
@@ -132,7 +132,18 @@ subroutine init()
       if (vb.and.(mod(i,500)==0)) print *, Vtot
 
       r = r + f * tmp
-      r = modulo(r, L)
+      r(1:2,:) = modulo(r(1:2,:), L)
+
+    end do
+
+    tmp = 100*tmp
+    do i=1,500
+
+      call force(1)
+      if (vb.and.(mod(i,100)==0)) print *, Vtot
+
+      r = r + f * tmp
+      r(1:2,:) = modulo(r(1:2,:), L)
 
     end do
 

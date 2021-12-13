@@ -4,7 +4,7 @@ subroutine fluid_wall
     integer :: i, i_type
     real(8) :: inv_z, r_dummy, v_fluid_wall, zskin, e_wall, s_wall
     
-    zskin = 0.5
+    zskin = 0.7
     v_fluid_wall = 0.
 
     do i = 1,N
