@@ -1,14 +1,14 @@
 200       N_fluid (fluid molecules)
 40        N_surf (surfactant molecules, each 2 atoms)
-10        L (box size in x,y)
-10        Z (box size in z)
+10.        L (box size in x,y)
+10.        Z (box size in z)
 1.5       zskin
 0.93      Temperature
-500000    nstep
+100000    nstep
 0.001     dt
 1.0       epsilon for atoms 1,1
 1.0       epsilon for atoms 2,2
-1.0       epsilon for atoms 1,2
+0.7       epsilon for atoms 1,2
 1.0       sigma for atoms 1,1
 1.0       sigma for atoms 2,2
 1.0       sigma for atoms 1,2

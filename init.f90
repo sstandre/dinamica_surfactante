@@ -6,7 +6,7 @@ subroutine init()
   logical :: es, ms
   integer :: i, j, n_flu, n_surf
   character(len=80) :: text
-  real(8) :: dtm, sv1, sv2, tmp, r0
+  real(8) :: dtm, sv1, sv2, tmp, r0, lim_inf(3), lim_sup(3), li, ls
 #ifdef GDR
   integer :: k
 #endif
@@ -89,9 +89,13 @@ subroutine init()
 
     if (vb) print *,"  * Inicializando configuracion aleatoria"
     ! Primero sorteo los dimeros: particulas de tipo 1 con un offset a las de tipo 2
+    lim_inf = (/real(8) :: 0., 0., zskin/)
+    lim_sup = (/real(8) :: L, L, Z-zskin/)
     do i = 1, 3
+      li= lim_inf(i)
+      ls= lim_sup(i)
       do j = 1, n_2
-        r0 = uni()*L
+        r0 = li + uni()*(ls-li)
         r(i,j) = r0
         v(i,j) = rnor()*sv1
         ! las colas del surfactante estan al final de la lista
@@ -111,9 +115,11 @@ subroutine init()
   ! Hacemos unos pasos de minimizacion de energia, para evitar tener particulas muy cerca
     dtm = 0.001
     tmp = dtm**2/(2*m(1))
-    do i=1,500
+    do i=1,1000
 
       call force(1)
+      call intra_molec()
+      call fluid_wall()
       if (vb.and.(mod(i,100)==0)) print *, Vtot
 
       r = r + f * tmp
