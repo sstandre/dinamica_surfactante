@@ -4,18 +4,20 @@ subroutine init()
 #include "control.h"
   implicit none
   logical :: es, ms
-  integer :: i, j
+  integer :: i, j, n_flu, n_surf
   character(len=80) :: text
-  real(8) :: dtm, sv(2), tmp
+  real(8) :: dtm, sv1, sv2, tmp, r0
 #ifdef GDR
   integer :: k
 #endif
 
-!   Leer variables del archivo input.dat y alocar variables
+!   Leer variables del archivo input.dat, asignar y alocar variables
   open(unit=11,file='input.dat',action='read',status='old')
-  read(11,*) n_1, text
-  read(11,*) n_2, text
+  read(11,*) n_flu, text
+  read(11,*) n_surf, text
   read(11,*) L, text
+  read(11,*) Z, text
+  read(11,*) zskin, text
   read(11,*) T, text
   read(11,*) nstep, text
   read(11,*) dt, text
@@ -35,7 +37,16 @@ subroutine init()
   eps(2,1) = eps(1,2)
   sigma(2,1) = sigma(1,2)
 
-  !T = T * eps !Revisar
+  !Las propiedades de la pared estan hardcodeadas
+  eps_wall(1) = 1.
+  eps_wall(2) = 1.
+  sigma_wall = 1.
+  
+  ! Particulas de tipo 1
+  n_1 = n_flu + n_surf
+  ! Particulas de tipo 2
+  n_2 = n_surf
+  ! Numero total de particulas y alocar vectores
   N = n_1 + n_2
   allocate(r(3,N),v(3,N),f(3,N), atype(N))
   !Asignar cada tipo de particula
@@ -73,12 +84,26 @@ subroutine init()
 
   else
   ! Si no hay configuracion inicial, inicializar con posiciones y velocidades aleatorias
-    sv = sqrt(T/m)
+    sv1 = sqrt(T/m(1))
+    sv2 = sqrt(T/m(2))
+
     if (vb) print *,"  * Inicializando configuracion aleatoria"
+    ! Primero sorteo los dimeros: particulas de tipo 1 con un offset a las de tipo 2
     do i = 1, 3
-      do j = 1, N
+      do j = 1, n_2
+        r0 = uni()*L
+        r(i,j) = r0
+        v(i,j) = rnor()*sv1
+        ! las colas del surfactante estan al final de la lista
+        r(i,j+n_1) = r0+uni()
+        v(i,j) = rnor()*sv2
+      end do
+    end do
+    ! Depsues sorteo las particulas del fluido, de tipo 1
+    do i = 1, 3
+      do j = n_2+1, n_1
         r(i,j) = uni()*L
-        v(i,j) = rnor()*sv(atype(j))
+        v(i,j) = rnor()*sv1
       end do
     end do
 
