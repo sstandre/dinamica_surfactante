@@ -26,8 +26,8 @@ subroutine force(mode)
       do j = i+1, N
         
         dvec(:) = r(:,i) - r(:,j)
-        ! Por condiciones de contorno, la distancia siempre debe ser -L/2<d<L/2
-        dvec = dvec - L*int(2*dvec/L)
+        ! Por condiciones de contorno, la distancia en x,y debe ser -L/2<d<L/2
+        dvec(1:2) = dvec(1:2) - L*int(2*dvec(1:2)/L)
         ! Solo necesito distancia^2 para hacer las cuentas
         dist2 = sum(dvec*dvec)
         if(dist2 < rc2) then  ! Solo cuento atomos dentro del radio de corte

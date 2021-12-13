@@ -73,7 +73,7 @@ subroutine init()
   call force(0)
 
 ! Chequear si existe configuracion.dat, y cargarla como configuracion inicial
-  inquire(file='configuracion.dat',exist=ms)
+  inquire(file='configuracionfff.dat',exist=ms)
   if(ms) then
     if (vb) print *,"  * Leyendo configuracion inicial de configuracion.dat"
     open(unit=12,file='configuracion.dat',status='old')
@@ -113,9 +113,22 @@ subroutine init()
 
     if (vb) print *, "Energia potencial:"
   ! Hacemos unos pasos de minimizacion de energia, para evitar tener particulas muy cerca
-    dtm = 0.001
+    dtm = 0.0001
     tmp = dtm**2/(2*m(1))
-    do i=1,1000
+    do i=1,2000
+
+      call force(1)
+      call intra_molec()
+      call fluid_wall()
+      if (vb.and.(mod(i,100)==0)) print *, Vtot
+
+      r = r + f * tmp
+      r = modulo(r, L)
+
+    end do
+
+    tmp = 100*tmp
+    do i=1,2000
 
       call force(1)
       call intra_molec()
