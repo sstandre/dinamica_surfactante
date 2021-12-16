@@ -3,7 +3,7 @@ exe = surfactante
 fcomp = gfortran #ifort # /opt/intel/compiler70/ia32/bin/ifc  
 # Warning: the debugger doesn't get along with the optimization options
 # So: not use -O3 WITH -g option
-flags = -cpp -O3  
+flags = -cpp -O3 -fopenmp
 # Remote compilation
 OBJS = ziggurat.o globals.o write_conf.o lang.o init.o force.o intra_molec.o \
 	   fluid_wall.o verlet_positions.o verlet_velocities.o final.o main.o minim.o

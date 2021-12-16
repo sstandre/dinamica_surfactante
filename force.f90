@@ -21,6 +21,7 @@ subroutine force(mode)
     f(:,:) = 0.0
     presion = 0.0
 
+!$OMP PARALLEL DO PRIVATE(j,i_type,dvec,dist2,eps_ij,temp,fij)  SCHEDULE(STATIC,1) REDUCTION(+:f,Vtot, presion)
     do i = 1, N-1
       i_type = atype(i)
       do j = i+1, N
@@ -49,7 +50,7 @@ subroutine force(mode)
         end if
       end do
     end do
-    
+!$OMP END PARALLEL DO
     presion = (presion/3 + N*T)/L**3  ! Este calculo de fuerzas tiene sentido?
     ! Que onda con fuerza intramolecular?
 
