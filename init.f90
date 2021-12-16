@@ -37,8 +37,8 @@ subroutine init()
   sigma(2,1) = sigma(1,2)
 
   !Las propiedades de la pared estan hardcodeadas
-  eps_wall(1) = 1.
-  eps_wall(2) = 1.
+  eps_wall(1) = 2.
+  eps_wall(2) = 2.
   sigma_wall(1) = 1.
   sigma_wall(2) = 1.
   

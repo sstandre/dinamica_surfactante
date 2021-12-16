@@ -3,8 +3,8 @@
 10.        L (box size in x,y)
 10.        Z (box size in z)
 0.7       Temperature
-100000    nstep
-0.0002     dt
+500000    nstep
+0.001    dt
 1.0       epsilon for atoms 1,1
 1.0       epsilon for atoms 2,2
 0.5       epsilon for atoms 1,2
