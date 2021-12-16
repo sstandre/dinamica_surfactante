@@ -15,8 +15,7 @@ program main
   call force(1)
   call fluid_wall()
 
-  print_debug = .true.
-  call write_conf(1)
+  print_debug = .true.    ! Chequear que las particulas no se vayan de la caja
 
   if (vb) then
     print *, '**************************************************************************'
