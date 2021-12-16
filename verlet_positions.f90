@@ -1,11 +1,12 @@
 subroutine verlet_positions
     use globals
     implicit none
-    real(8) :: temp
+    real(8) :: temp, bound(3)
     integer :: i,j
 
     temp = dt**2/2
-    
+    bound = (/real(8) :: L, L, Z/)
+
     do i =1,N
         ! Actualizo posiciones a t+dt
         r(:,i) = r(:,i) + v(:,i)*dt + f(:,i)*temp/m(atype(i))
@@ -24,7 +25,7 @@ subroutine verlet_positions
 
         if (print_debug) then
             do j = 1,3
-                if (r(j,i) > L .or. r(j,i) < 0) then
+                if (r(j,i) > bound(j) .or. r(j,i) < 0) then
                     print *, "STOOOOOP"
                     print *, r(:, i)
                     stop
