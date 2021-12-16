@@ -19,7 +19,7 @@ subroutine force(mode)
     ! Inicializar acumuladores en 0
     Vtot = 0.0
     f(:,:) = 0.0
-    presion = 0.0
+    ! presion = 0.0
 
 !$OMP PARALLEL DO PRIVATE(j,i_type,dvec,dist2,eps_ij,temp,fij)  SCHEDULE(STATIC,1) REDUCTION(+:f,Vtot, presion)
     do i = 1, N-1
@@ -46,12 +46,12 @@ subroutine force(mode)
           f(:,j) = f(:,j) - fij(:)
 
           !virial (chequear signo)
-          presion = presion + sum(dvec*fij)
+          ! presion = presion + sum(dvec*fij)
         end if
       end do
     end do
 !$OMP END PARALLEL DO   
-    presion = (presion/3 + N*T)/L**3  ! Este calculo de fuerzas tiene sentido?
+    ! presion = (presion/3 + N*T)/L**3  ! Este calculo de fuerzas tiene sentido?
     ! Que onda con fuerza intramolecular?
 
     ! Fuerzas intermoleculares

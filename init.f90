@@ -68,8 +68,7 @@ subroutine init()
   call zigset(seed)
 ![FIN NO TOCAR]   
 
-  ! Abro archivos e incializo variables en write_conf y force
-  call write_conf(0)
+  ! Inicializo variables en force
   call force(0)
 
 ! Chequear si existe configuracion.dat, y cargarla como configuracion inicial

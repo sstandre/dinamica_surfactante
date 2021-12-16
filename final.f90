@@ -9,6 +9,9 @@ subroutine final()
     integer :: k
     real(8) :: dens_casc
 #endif
+
+    ! Cerrar el archivo de mediciones
+    call medir(2)
     ! Cerrar el archivo de configuraciones
     call write_conf(2)
 
