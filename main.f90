@@ -9,9 +9,14 @@ program main
   real(8) :: d, dvec(3)
 #endif
   
+  print_debug = .false.
   ! Inicializo posiciones y velocidades y calculo el potencial y las fuerzas
   call init()
   call force(1)
+  call fluid_wall()
+
+  print_debug = .true.
+  call write_conf(1)
 
   if (vb) then
     print *, '**************************************************************************'
@@ -34,6 +39,7 @@ program main
     call verlet_velocities()
     ! Actualizo el potencial y las fuerzas a t+dt
     call force(1)
+    call fluid_wall()
     ! Actualizar las fuerzas con el termostato de Langevin
     call lang()
     ! Velocidad "final" (en t+dt)

@@ -53,9 +53,9 @@ subroutine force(mode)
     presion = (presion/3 + N*T)/L**3  ! Este calculo de fuerzas tiene sentido?
     ! Que onda con fuerza intramolecular?
 
-    ! Fuerzas intermoleculares y con la pared
+    ! Fuerzas intermoleculares
     call intra_molec()
-    call fluid_wall()
+    
 
   end select
 

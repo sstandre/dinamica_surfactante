@@ -4,9 +4,9 @@ subroutine init()
 #include "control.h"
   implicit none
   logical :: es, ms
-  integer :: i, j, n_flu, n_surf
+  integer :: i, j, n_flu, n_surf, nmin
   character(len=80) :: text
-  real(8) :: dtm, sv1, sv2, tmp, r0, lim_inf(3), lim_sup(3), li, ls
+  real(8) :: dtm, sv1, sv2, tmp, r0, lim_inf(3), lim_sup(3), li, ls, zskin
 #ifdef GDR
   integer :: k
 #endif
@@ -73,7 +73,7 @@ subroutine init()
   call force(0)
 
 ! Chequear si existe configuracion.dat, y cargarla como configuracion inicial
-  inquire(file='configuracionfff.dat',exist=ms)
+  inquire(file='configuracion.dat',exist=ms)
   if(ms) then
     if (vb) print *,"  * Leyendo configuracion inicial de configuracion.dat"
     open(unit=12,file='configuracion.dat',status='old')
@@ -89,8 +89,9 @@ subroutine init()
 
     if (vb) print *,"  * Inicializando configuracion aleatoria"
     ! Primero sorteo los dimeros: particulas de tipo 1 con un offset a las de tipo 2
-    lim_inf = (/real(8) :: 0., 0., 2.0/)
-    lim_sup = (/real(8) :: L, L, Z-2.0/)
+    zskin = 1.5
+    lim_inf = (/real(8) :: 0., 0., zskin/)
+    lim_sup = (/real(8) :: L, L, Z-zskin/)
     do i = 1, 3
       li= lim_inf(i)
       ls= lim_sup(i)
@@ -113,40 +114,14 @@ subroutine init()
 
     if (vb) print *, "Energia potencial:"
   ! Hacemos unos pasos de minimizacion de energia, para evitar tener particulas muy cerca
-    dtm = 0.00001
+    dtm = 0.0001
     tmp = dtm**2/(2*m(1))
-    do i=1,2000
-
-      call force(1)
-      if (vb.and.(mod(i,200)==0)) print *, Vtot
-
-      r = r + f * tmp
-      r(1:2,:) = modulo(r(1:2,:), L)
-
-    end do
-
-    tmp = 1000*tmp
-    do i=1,5000
-
-      call force(1)
-      if (vb.and.(mod(i,500)==0)) print *, Vtot
-
-      r = r + f * tmp
-      r(1:2,:) = modulo(r(1:2,:), L)
-
-    end do
-
-    tmp = 100*tmp
-    do i=1,500
-
-      call force(1)
-      if (vb.and.(mod(i,100)==0)) print *, Vtot
-
-      r = r + f * tmp
-      r(1:2,:) = modulo(r(1:2,:), L)
-
-    end do
-
+    nmin = 5000
+    call minim(tmp, nmin, zskin)
+    if (vb) print *, "Aumento dt"
+    tmp = tmp *10
+    nmin = 10000
+    call minim(tmp, nmin, zskin)
   end if
 
 #ifdef GDR
