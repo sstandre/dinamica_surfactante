@@ -50,7 +50,7 @@ subroutine force(mode)
         end if
       end do
     end do
-!$OMP END PARALLEL DO
+!$OMP END PARALLEL DO   
     presion = (presion/3 + N*T)/L**3  ! Este calculo de fuerzas tiene sentido?
     ! Que onda con fuerza intramolecular?
 
