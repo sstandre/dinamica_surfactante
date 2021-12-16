@@ -2,9 +2,9 @@ subroutine fluid_wall
     use globals
     implicit none
     integer :: i, i_type
-    real(8) :: inv_z, r_dummy, v_fluid_wall, zskin, e_wall, s_wall
+    real(8) :: inv_z, r_dummy, v_fluid_wall, zwall, e_wall, s_wall
     
-    zskin = 0.7
+    zwall = 0.7
     v_fluid_wall = 0.
 
     do i = 1,N
@@ -19,7 +19,7 @@ subroutine fluid_wall
         f(3,i) = f(3,i) + 9.*e_wall*(s_wall)**9*(inv_z)**10
         f(3,i) = f(3,i) - 3.*e_wall*(s_wall)**3*(inv_z)**4
         ! En la pared superior "rebota"
-        if ( r(3,i) > (Z - zskin) .and. v(3,i) > 0. ) then
+        if ( r(3,i) > (Z - zwall) .and. v(3,i) > 0. ) then
             v(3,i) = -v(3,i)
         end if  
     end do
