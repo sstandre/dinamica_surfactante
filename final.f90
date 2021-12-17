@@ -23,16 +23,6 @@ subroutine final()
     end do
  
     close(12) 
-  
-    !Guardar funcion g(r) normalizada
-#ifdef GDR
-    open(unit=13,file='correlacion.dat',action='write',status='unknown')
-    do k = 1, n_bins
-      dens_casc = 4.0/3.0*3.141592*(bines(k)**3-bines(k-1)**3)*N/L**3
-      write(13,*) bines(k), cuentas(k)/(N*dens_casc*nstep/nwrite)
-    end do
-    close(13)
-#endif
 
 
 ! Escribir la última semilla para continuar con la cadena de numeros aleatorios 

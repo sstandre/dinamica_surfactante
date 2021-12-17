@@ -4,9 +4,9 @@ subroutine minim(tmp, nmin, zskin)
     real(8), intent(in) :: tmp, zskin
     integer, intent(in) :: nmin
     integer :: imin, i
-    real(8) :: deltaz
+    real(8) :: z_red
 
-    deltaz = Z-2*zskin
+    z_red = Z-2*zskin
 
     do imin=1,nmin
         call force(1)
@@ -17,7 +17,7 @@ subroutine minim(tmp, nmin, zskin)
             
             ! al principio vale todo para minimizar
             r(1:2,i) = modulo(r(1:2,i), L)
-            r(3,i) = modulo(r(3,i)-zskin, deltaz) + zskin
+            r(3,i) = modulo(r(3,i)-zskin, z_red) + zskin
 
         end do
         
