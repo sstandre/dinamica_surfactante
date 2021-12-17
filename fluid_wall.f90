@@ -2,15 +2,14 @@ subroutine fluid_wall
     use globals
     implicit none
     integer :: i, i_type
-    real(8) :: inv_z, r_dummy, v_fluid_wall, zwall, e_wall, s_wall
+    real(8) :: inv_z, r_dummy, v_fluid_wall, e_wall, s_wall
     
-    zwall = 0.7
     v_fluid_wall = 0.
 
     do i = 1,N
         i_type = atype(i)
-        e_wall =(eps_wall(i_type))
-        s_wall = (sigma_wall(i_type))
+        e_wall = eps_wall(i_type)
+        s_wall = sigma_wall(i_type)
         inv_z = 1./r(3,i)
         r_dummy = s_wall*inv_z
         ! En la pared inferior tengo un potencial L-J integrado

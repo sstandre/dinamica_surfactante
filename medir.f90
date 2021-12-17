@@ -3,7 +3,7 @@ subroutine medir(mode)
     implicit none
     integer, intent(in) :: mode
     integer :: i, zi, i_type
-    real(8) :: normal1, normal2
+    real(8) :: normal1, normal2, rcm
 #ifdef GDR
     integer :: j,k
     real(8) :: d, dvec(3)
@@ -15,6 +15,7 @@ subroutine medir(mode)
         zbins = 100
         deltaz = dble(Z)/dble(zbins)
         allocate(hist_z(2,0:zbins-1))
+        hist_z(:,:) = 0
 
         ! Abro archivo .vtf
         call write_conf(0)
@@ -42,12 +43,7 @@ subroutine medir(mode)
         Ecin = 0
         do i = 1, N
             i_type = atype(i)
-
             Ecin = Ecin + sum(v(:,i)*v(:,i))*(m(i_type))
-            ! Perfil de densidad
-            zi = int(r(3,i)/deltaz)
-            hist_z(i_type, zi) = hist_z(i_type, zi) + 1
-            
         end do
         Ecin = 0.5*Ecin / N
         Vtot = Vtot / N
@@ -58,8 +54,15 @@ subroutine medir(mode)
         call write_conf(1)
         ! Calcular perfil de densidad
         ! USAR POSICIONES NORMALIZADAS PARA BINS
-        do i = 1, N
-            
+        do i = 1, n_2
+            rcm = 0.5 * (r(3,i) + r(3,i+n_1))
+            zi = int(rcm/deltaz)
+            hist_z(2, zi) = hist_z(2, zi) + 1 
+        end do
+        
+        do i = n_2+1, n_1
+            zi = int(r(3,i)/deltaz)
+            hist_z(1, zi) = hist_z(1, zi) + 1 
         end do
 
 #ifdef GDR
@@ -82,10 +85,10 @@ subroutine medir(mode)
 
         ! Guardar perfil de densidad
         open(unit=14,file='perfil.dat',action='write',status='unknown')
-        write(14,*) "Z        atom_1       atom_2"
+        write(14,*) "Z        fluid       surfact"
         do i = 0, zbins-1
-            normal1 = hist_z(1,i) / (n_1 * nstep/nwrite) 
-            normal2 = hist_z(2,i) / (n_2 * nstep/nwrite) 
+            normal1 = dble(hist_z(1,i)) / (n_1 * nstep/nwrite) 
+            normal2 = dble(hist_z(2,i)) / (n_2 * nstep/nwrite) 
             write(14,*) deltaz*i, normal1, normal2
         end do
         close(14)

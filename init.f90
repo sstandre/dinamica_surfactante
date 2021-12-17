@@ -37,10 +37,13 @@ subroutine init()
   sigma(2,1) = sigma(1,2)
 
   !Las propiedades de la pared estan hardcodeadas
-  eps_wall(1) = 1.5
-  eps_wall(2) = 1.5
+  eps_wall(1) = 1.
+  eps_wall(2) = 1.
   sigma_wall(1) = 1.
   sigma_wall(2) = 1.
+
+  ! Gap de la pared superior
+  zwall = 0.5
   
   ! Particulas de tipo 1
   n_1 = n_flu + n_surf
