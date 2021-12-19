@@ -6,3 +6,5 @@ __pycache__/
 seed.dat
 surfactante
 data/
+data_temp/
+*.tar.gz

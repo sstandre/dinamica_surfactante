@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import os
-from statistics import mean, stdev
+from math import prod
 
 def traverse_folders(data, names, level=0):
     if level >= len(names):
@@ -21,37 +21,29 @@ def traverse_folders(data, names, level=0):
 
 
 def write_aggregate(data):
-    with open('output.dat', 'r') as file:
+    with open('perfil.dat', 'r') as file:
         next(file) # skip headers
-        zipped = zip(*(map(float, line.split()[1:]) for line in file.readlines()))
+        integrated = sum(
+            prod(map(float, line.split()[1:])) for line in file.readlines()
+            )
 
-    aggregated = [
-        str(x) 
-        for values in zipped 
-        for x in (mean(values), mean(map(lambda x: x**2, values)))
-        ]       
+    aggregated = [str(integrated)]       
 
     data = '\t'.join(data+aggregated)+'\n'
     datafile.write(data)
 
 
 HEADER = '\t'.join((
-    'densidad',
-    'temperatura',
+    'eps_12',
+    'n_surf',
+    'temp',
     'job',
-    'potencial_mean',
-    'potencial_2',
-    'cinetica_mean',
-    'cinetica_2',
-    'total_mean',
-    'total_2',
-    'presion_mean', 
-    'presion_2', 
+    'superposicion',
     ))+'\n'
 
 OUTFILE = 'alldata.dat'
 DATAFOLDER = 'data'
-NAMES = ['dens', 'temp', 'JOB']
+NAMES = ['eps', 'surf', 'temp', 'JOB']
 
 with open(OUTFILE, 'w') as datafile:
     datafile.write(HEADER)
