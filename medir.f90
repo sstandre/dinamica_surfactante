@@ -87,7 +87,7 @@ subroutine medir(mode)
         open(unit=14,file='perfil.dat',action='write',status='unknown')
         write(14,*) "Z        fluid       surfact"
         do i = 0, zbins-1
-            normal1 = dble(hist_z(1,i)) / (n_1 * nstep/nwrite) 
+            normal1 = dble(hist_z(1,i)) / ((n_1-n_2) * nstep/nwrite) 
             normal2 = dble(hist_z(2,i)) / (n_2 * nstep/nwrite) 
             write(14,*) deltaz*i, normal1, normal2
         end do

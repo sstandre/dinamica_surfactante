@@ -8,20 +8,27 @@ from pathlib import Path
 
 constants = {
     'dt'      : '0.001',
-    'epsilon' : '1.0',
-    'sigma'   : '1.0',
-    'mass'    : '1.0',
+    'eps_11'  : '1.0',
+    'eps_22'  : '1.0',
+    'eps_12'  : '0.5',
+    'sig_11'   : '1.0',
+    'sig_22'   : '1.0',
+    'sig_12'   : '1.0',
+    'mass1'    : '1.0',
+    'mass2'    : '1.0',
     'gamma'   : '0.5',
     'nwrite'  : '500',
     'verbose' : 'false',
     }
 
-N           = 200
+L           = 10.
+Z           = 10.
+N_fluid     = 300
 steps       = 500_000
 steps_term  = 100_000
 
-densidades = [0.3]
-temperaturas = [0.7, 0.93]
+surfactantes = [10, 30, 50, 100]
+temperaturas = [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 # densidades = [0.9]
 # temperaturas = [0.7 + 0.7/9*i for i in range(10)]
 
@@ -33,19 +40,22 @@ temperaturas = [0.7, 0.93]
 # temperaturas = [0.9, 2.0]
 
 data_files = [
-    'input.dat', 'output.dat', 'configuracion.dat', 'movie.vtf', 'correlacion.dat'
+    'input.dat', 'output.dat', 'configuracion.dat', 'movie.vtf', 'perfil.dat'
     ]
 data_folder = Path('./data')
-EXE = './dinamica_gdr'
+EXE = './surfactante'
 SKIP_EXISTING = True
+openmp_threads = 4
 
 
-def run_job(densidad, steps, temp, N, constants):
+
+def run_job(n_surf, steps, temp, N, L, Z, constants):
     
-    L = f'{(N/densidad)**(1/3):.3f}'
-    data = f'{N:<10}N (atoms)\n'         + \
-           f'{L:<10}L (box size)\n'      + \
-           f'{temp:<10.2f}Temperature\n' + \
+    data = f'{N:<10}N_fluid (fluid molecules)\n'                        + \
+           f'{n_surf:<10}N_surf (surfactant molecules, each 2 atoms)\n' + \
+           f'{L:<10}L (box size in x,y)\n'                              + \
+           f'{Z:<10}L (box size in z)\n'                                + \
+           f'{temp:<10.2f}Temperature\n'                                + \
            f'{steps:<10}nstep\n'
 
     with open('input.dat','w') as infile:
@@ -68,19 +78,22 @@ def main(args):
             print('El argumento debe ser un numero entero')
             return 1
         
-        for d in densidades:
+        os.environ["OMP_NUM_THREADS"] = str(openmp_threads)
+
+        for nsur  in surfactantes:
             if os.path.exists('configuracion.dat'):
-                    print('Quitando configuracion.dat para nueva densidad.')
+                    print('Quitando configuracion.dat para nueva cantidad de surfactante.')
                     os.remove('configuracion.dat')
             
             for temp in temperaturas:
-                tempdir = data_folder / f'{d:.3f}_dens' / f'{temp:.2f}_temp'
+                eps = constants['eps_12']
+                tempdir = data_folder / f'{eps}_eps' /f'{nsur:03}_surf' / f'{temp:.2f}_temp'
                 print('*'*40)
-                print(f'Corrida a densidad={d:.3f}, T={temp:.2f}')
+                print(f'Corrida con surfactante={nsur:03}, T={temp:.2f}')
 
                 # corrida de termalizacion
                 print("Termalizacion")
-                run_job(d, steps_term, temp, N, constants)
+                run_job(nsur, steps_term, temp, N_fluid, L, Z, constants)
                     
                 for job in range(1,njobs+1):                   
                     dirname = tempdir / f'{job:02}_JOB'
@@ -92,7 +105,7 @@ def main(args):
                     
                     print(f'Inciando trabajo {job}')
                     # corrida de produccion
-                    run_job(d, steps, temp, N, constants)
+                    run_job(nsur, steps, temp, N_fluid, L, Z, constants)
                     
                     for file in data_files:
                         copy(file, dirname)

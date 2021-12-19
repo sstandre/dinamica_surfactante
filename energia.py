@@ -24,15 +24,18 @@ keys = [
     ]
 g = globals()
 
-with open('input.dat') as f:
+
+# folder = '.'
+folder = './data/0.8_eps/050_surf/0.90_temp/03_JOB/'
+
+
+with open(folder + 'input.dat') as f:
     for key, line in zip(keys, f.readlines()):
         g[key] = float(line.split()[0])
 
 N = n_flu + 2* n_sur
-folder = '.'
-# folder = './data/0.418_dens/1.1_temp/01_JOB'
 
-steps, Epot, Ecin, Etot = np.loadtxt(folder+'/output.dat', skiprows=1, unpack=True)
+steps, Epot, Ecin, Etot = np.loadtxt(folder+'output.dat', skiprows=1, unpack=True)
 
 print(f'Energía potencial media: {Epot.mean():.2f} ± {Epot.std():.2f}')
 print(f'Energía cinética media: {Ecin.mean():.2f} ± {Ecin.std():.2f}')
@@ -52,7 +55,7 @@ plt.plot(steps*dt, Etot, label="Energia total")
 plt.xlabel('Tiempo')
 plt.legend(loc=(0.1, 0.3))
 
-z_bins, esp1, esp2 = np.loadtxt(folder+'/perfil.dat', skiprows=1, unpack=True)
+z_bins, esp1, esp2 = np.loadtxt(folder+'perfil.dat', skiprows=1, unpack=True)
 
 plt.figure()
 plt.plot(z_bins, esp1, label="fluido")

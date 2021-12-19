@@ -1,18 +1,18 @@
-200       N_fluid (fluid molecules)
-40        N_surf (surfactant molecules, each 2 atoms)
-8.        L (box size in x,y)
-10.        Z (box size in z)
-0.5       Temperature
-100000    nstep
-0.001    dt
-1.0       epsilon for atoms 1,1
-1.0       epsilon for atoms 2,2
-0.8       epsilon for atoms 1,2
-1.0       sigma for atoms 1,1
-1.0       sigma for atoms 2,2
-1.0       sigma for atoms 1,2
-1.0       mass for atom 1
-1.0       mass for atom 2
+300       N_fluid (fluid molecules)
+100       N_surf (surfactant molecules, each 2 atoms)
+10.0      L (box size in x,y)
+10.0      L (box size in z)
+0.90      Temperature
+500000    nstep
+0.001     dt
+1.0       eps_11
+1.0       eps_22
+0.7       eps_12
+1.0       sig_11
+1.0       sig_22
+1.0       sig_12
+1.0       mass1
+1.0       mass2
 0.5       gamma
 500       nwrite
-true     verbose
+false     verbose
