@@ -23,8 +23,10 @@ def traverse_folders(data, names, level=0):
 def write_aggregate(data):
     with open('perfil.dat', 'r') as file:
         next(file) # skip headers
+        # y1, y2 = zip(*(map(float, line.split()[1:]) for line in file.readlines()))
         integrated = sum(
-            prod(map(float, line.split()[1:])) for line in file.readlines()
+            (lambda x,y:abs(float(x)-float(y)))(*line.split()[1:])
+            for line in file.readlines()
             )
 
     aggregated = [str(integrated)]       
