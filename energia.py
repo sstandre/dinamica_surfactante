@@ -26,7 +26,7 @@ g = globals()
 
 
 # folder = '.'
-folder = './data/0.8_eps/050_surf/0.90_temp/03_JOB/'
+folder = './data/0.5_eps/050_surf/0.70_temp/01_JOB/'
 
 
 with open(folder + 'input.dat') as f:
@@ -49,11 +49,11 @@ print(f'Temperatura real: {Treal:.2f}')
 
 
 
-plt.plot(steps*dt, Epot, label="Energia potencial")
-plt.plot(steps*dt, Ecin, label="Energia cinetica")
-plt.plot(steps*dt, Etot, label="Energia total")
-plt.xlabel('Tiempo')
-plt.legend(loc=(0.1, 0.3))
+# plt.plot(steps*dt, Epot, label="Energia potencial")
+# plt.plot(steps*dt, Ecin, label="Energia cinetica")
+# plt.plot(steps*dt, Etot, label="Energia total")
+# plt.xlabel('Tiempo')
+# plt.legend(loc=(0.1, 0.3))
 
 z_bins, esp1, esp2 = np.loadtxt(folder+'perfil.dat', skiprows=1, unpack=True)
 
