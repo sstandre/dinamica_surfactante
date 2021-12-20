@@ -29,8 +29,8 @@ steps       = 500_000
 steps_term  = 100_000
 
 epsilons = ['0.6']
-surfactantes = [50]
-temperaturas = [0.5]
+surfactantes = [50, 100]
+temperaturas = [0.5, 0.6, 0.7, 0.8, 0.9]
 # densidades = [0.9]
 # temperaturas = [0.7 + 0.7/9*i for i in range(10)]
 

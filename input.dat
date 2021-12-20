@@ -1,8 +1,8 @@
 300       N_fluid (fluid molecules)
-50        N_surf (surfactant molecules, each 2 atoms)
+100       N_surf (surfactant molecules, each 2 atoms)
 10.0      L (box size in x,y)
 10.0      L (box size in z)
-0.50      Temperature
+0.90      Temperature
 500000    nstep
 0.001     dt
 1.0       eps_11
