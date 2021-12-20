@@ -1,14 +1,8 @@
 subroutine final()
     use globals
     use ziggurat
-#include "control.h"
     implicit none
-
     integer :: i, j
-#ifdef GDR    
-    integer :: k
-    real(8) :: dens_casc
-#endif
 
     ! Cerrar el archivo de mediciones
     call medir(2)

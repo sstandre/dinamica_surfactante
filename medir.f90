@@ -1,12 +1,13 @@
 subroutine medir(mode)
     use globals
+#include "control.h"
     implicit none
     integer, intent(in) :: mode
     integer :: i, zi, i_type
     real(8) :: normal1, normal2, rcm
 #ifdef GDR
-    integer :: j,k
-    real(8) :: d, dvec(3)
+    integer :: j, j_type, k, n_norm(2), ri
+    real(8) :: d, dvec(3), dens_casc, temp
 #endif
 
     select case(mode)
@@ -38,6 +39,14 @@ subroutine medir(mode)
             print *, '--------------------------------------------------------------------------'
         end if
 
+
+#ifdef GDR
+        gdr_bins = 200
+        deltag = 4./dble(gdr_bins)
+        allocate(hist_gdr(2,2,0:gdr_bins-1))
+        hist_gdr(:,:,:) = 0
+#endif
+
     case(1) 
         !Mediciones y escribir a archivo
         Ecin = 0
@@ -67,13 +76,22 @@ subroutine medir(mode)
 
 #ifdef GDR
         do i = 1, N-1
-        do j = i+1, N
-            dvec(:) = r(:,i) - r(:,j)
-            ! Por condiciones de contorno, la distancia en x,y debe ser -L/2<d<L/2
-            dvec(1:2) = dvec(1:2) - L*int(2*dvec(1:2)/L)
-            d = sqrt(sum(dvec*dvec))
-            ! Contar la distancia en el primer bin que sea mayor a la distancia
-            ! USAR DISTANCIAS NORMALIZADAS PARA BINS
+            i_type = atype(i)
+            do j = i+1, N
+                j_type = atype(j)
+                dvec(:) = r(:,i) - r(:,j)
+                ! Por condiciones de contorno, la distancia en x,y debe ser -L/2<d<L/2
+                dvec(1:2) = dvec(1:2) - L*int(2*dvec(1:2)/L)
+                d = sqrt(sum(dvec*dvec))
+                if (d > 4.) then
+                    cycle
+                end if
+                ! Contar la distancia en el primer bin que sea mayor a la distancia
+                ! USAR DISTANCIAS NORMALIZADAS PARA BINS
+                ri = int(d/deltag)
+                hist_gdr(i_type, j_type, ri) = hist_gdr(i_type, j_type, ri) + 1 
+                hist_gdr(j_type, i_type, ri) = hist_gdr(j_type, i_type, ri) + 1 
+
             end do
         end do
 #endif       
@@ -95,10 +113,20 @@ subroutine medir(mode)
 
         ! Guardar funcion g(r) normalizada
 #ifdef GDR
+        if (vb) print *, "GUARDANDO G(R)"
         open(unit=15,file='rdf.dat',action='write',status='unknown')
-        do k = 1, gdr_bins
-          dens_casc = 4.0/3.0*3.141592*(bines(k)**3-bines(k-1)**3)*N/L**3
-          write(15,*) bines(k), cuentas(k)/(N*dens_casc*nstep/nwrite)
+        temp = 4.0/3.0*3.141592*deltag**3/(L**2*Z)
+        n_norm(1) = n_1
+        n_norm(2) = n_2
+        do k = 0, gdr_bins-1
+            write(15,"(ES15.8)", advance="NO") k*deltag
+            dens_casc = temp * ((k+1)**3-k**3)
+            do i = 1,2
+                do j = 1,2
+                    write(15,"(ES15.8)", advance="NO") hist_gdr(i, j, k)/(n_norm(i)*n_norm(j)*dens_casc*nstep/nwrite)
+                end do
+            end do
+            write(15,*)
         end do
         close(15)
 #endif

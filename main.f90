@@ -1,7 +1,5 @@
 program main
   use globals
-  use ziggurat
-#include "control.h"
   implicit none
   
   print_debug = .false.
@@ -10,7 +8,7 @@ program main
   call force(1)
   call fluid_wall()
 
-  print_debug = .true.    ! Chequear que las particulas no se vayan de la caja
+  print_debug = .false.    ! Chequear que las particulas no se vayan de la caja
   call medir(0)           ! Inicializa archivo de medición
 
   do istep = 1, nstep

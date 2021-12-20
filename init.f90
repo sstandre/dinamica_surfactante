@@ -1,7 +1,6 @@
 subroutine init()
   use globals
   use ziggurat
-#include "control.h"
   implicit none
   logical :: es, ms
   integer :: i, j, n_flu, n_surf, nmin
@@ -126,15 +125,6 @@ subroutine init()
     call minim(tmp, nmin, zskin)
   end if
 
-#ifdef GDR
-  n_bins = int(L*30)
-  allocate(cuentas(1:n_bins), bines(0:n_bins))
-  cuentas = 0.0
-  bines(0) = 0.0
-  do k = 1, n_bins
-    bines(k) = k*dble(L)/dble(n_bins)
-  end do
-#endif
 
  end subroutine
 

@@ -5,6 +5,7 @@ import os
 from subprocess import call
 from shutil import copy
 from pathlib import Path
+from contextlib import suppress
 
 constants = {
     'dt'      : '0.001',
@@ -27,8 +28,9 @@ N_fluid     = 300
 steps       = 500_000
 steps_term  = 100_000
 
-surfactantes = [10, 30, 50, 100]
-temperaturas = [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+epsilons = ['0.6']
+surfactantes = [50]
+temperaturas = [0.5]
 # densidades = [0.9]
 # temperaturas = [0.7 + 0.7/9*i for i in range(10)]
 
@@ -40,7 +42,7 @@ temperaturas = [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 # temperaturas = [0.9, 2.0]
 
 data_files = [
-    'input.dat', 'output.dat', 'configuracion.dat', 'movie.vtf', 'perfil.dat'
+    'input.dat', 'output.dat', 'configuracion.dat', 'movie.vtf', 'perfil.dat', 'rdf.dat'
     ]
 data_folder = Path('./data')
 EXE = './surfactante'
@@ -79,38 +81,40 @@ def main(args):
             return 1
         
         os.environ["OMP_NUM_THREADS"] = str(openmp_threads)
+        for eps in epsilons:
+            constants['eps_12'] = eps
+            for nsur  in surfactantes:
+                if os.path.exists('configuracion.dat'):
+                        print('Quitando configuracion.dat para nueva cantidad de surfactante.')
+                        os.remove('configuracion.dat')
+                
+                for temp in temperaturas:
+                    
+                    tempdir = data_folder / f'{eps}_eps' /f'{nsur:03}_surf' / f'{temp:.2f}_temp'
+                    print('*'*40)
+                    print(f'Corrida con surfactante={nsur:03}, T={temp:.2f}')
 
-        for nsur  in surfactantes:
-            if os.path.exists('configuracion.dat'):
-                    print('Quitando configuracion.dat para nueva cantidad de surfactante.')
-                    os.remove('configuracion.dat')
-            
-            for temp in temperaturas:
-                eps = constants['eps_12']
-                tempdir = data_folder / f'{eps}_eps' /f'{nsur:03}_surf' / f'{temp:.2f}_temp'
-                print('*'*40)
-                print(f'Corrida con surfactante={nsur:03}, T={temp:.2f}')
-
-                # corrida de termalizacion
-                print("Termalizacion")
-                run_job(nsur, steps_term, temp, N_fluid, L, Z, constants)
-                    
-                for job in range(1,njobs+1):                   
-                    dirname = tempdir / f'{job:02}_JOB'
-                    if os.path.exists(dirname) and SKIP_EXISTING:
-                        print(f'El directorio {dirname} ya existe, continuando con el siguiente.')
-                        continue
-                    elif not os.path.exists(dirname):
-                        os.makedirs(dirname)
-                    
-                    print(f'Inciando trabajo {job}')
-                    # corrida de produccion
-                    run_job(nsur, steps, temp, N_fluid, L, Z, constants)
-                    
-                    for file in data_files:
-                        copy(file, dirname)
-                    
-                print('-'*40)
+                    # corrida de termalizacion
+                    print("Termalizacion")
+                    run_job(nsur, steps_term, temp, N_fluid, L, Z, constants)
+                        
+                    for job in range(1,njobs+1):                   
+                        dirname = tempdir / f'{job:02}_JOB'
+                        if os.path.exists(dirname) and SKIP_EXISTING:
+                            print(f'El directorio {dirname} ya existe, continuando con el siguiente.')
+                            continue
+                        elif not os.path.exists(dirname):
+                            os.makedirs(dirname)
+                        
+                        print(f'Inciando trabajo {job}')
+                        # corrida de produccion
+                        run_job(nsur, steps, temp, N_fluid, L, Z, constants)
+                        
+                        for file in data_files:
+                            with suppress(FileNotFoundError):
+                                copy(file, dirname)
+                        
+                    print('-'*40)
 
         print(f'Todos los trabajos finalizados')
 

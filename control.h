@@ -1,6 +1,6 @@
 /* Variables for preprocessing */
 
-/*#   define GDR /* enciende GDR */
-#   undef GDR /* apaga GDR */
+#   define GDR /* enciende GDR */
+/*#   undef GDR /* apaga GDR */
 
 
